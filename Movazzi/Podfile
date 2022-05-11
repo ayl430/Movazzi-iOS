@@ -1,0 +1,27 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'Movazzi' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for Movazzi
+
+
+pod 'FSCalendar'
+pod 'Tabman'
+pod 'Alamofire'
+pod 'SDWebImage'
+pod 'RealmSwift'
+
+
+  target 'MovazziTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'MovazziUITests' do
+    # Pods for testing
+  end
+
+end
