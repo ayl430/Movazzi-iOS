@@ -128,33 +128,48 @@ class WriteDiaryViewController: UIViewController {
     
     // 저장하기 버튼 - 영화 id, 포스터, 작성일, 관람일, 제목, 평가, 리뷰
     @objc func saveButtonAction(_ sender:UIButton!) {
-        print("저장하기")
+        
+        let diaryDate = writeDiaryView.dateTextField.text ?? ""
+        let diaryRate = writeDiaryView.rateTextField.text ?? ""
+        let diaryReview = writeDiaryView.reviewTextView.text ?? ""
+        
+        if !diaryDate.isEmpty && !diaryRate.isEmpty && !diaryReview.isEmpty {
+            let newDiary = Diary()
+            
+            newDiary.movieId = movieId
+            newDiary.posterPath = posterPath
+            newDiary.writeDate = Date()
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .long
+            let dateString = dateFormatter.string(from: writeDiaryView.datePicker.date)
+            newDiary.date = dateString
+            
+            newDiary.title = writeDiaryView.movieTitleLabel.text ?? "제목 없음"
+            
+            newDiary.rate = Int(diaryRate) ?? 0
 
-        let newDiary = Diary()
-        
-        newDiary.movieId = movieId
-        newDiary.posterPath = posterPath
-        newDiary.writeDate = Date()
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .long
-        let dateString = dateFormatter.string(from: writeDiaryView.datePicker.date)
-        newDiary.date = dateString
-        
-        newDiary.title = writeDiaryView.movieTitleLabel.text ?? "제목 없음"
-        
-        guard let rateString = writeDiaryView.rateTextField.text else { return }
-        newDiary.rate = Int(rateString) ?? 0
-        newDiary.review = writeDiaryView.reviewTextView.text
-        
-        save(diary: newDiary)
-        
-        guard let previousController = self.navigationController?.previousViewController else { return }
-        self.navigationController?.popViewControllerWithHandler(animated: true, completion: {
-            self.showToast(controller: previousController, message: "저장 완료", font: .systemFont(ofSize: 14.0))
-        })
+            newDiary.review = diaryReview
+            
+            save(diary: newDiary)
+            
+            guard let previousController = self.navigationController?.previousViewController else { return }
+            self.navigationController?.popViewControllerWithHandler(animated: true, completion: {
+                self.showToast(controller: previousController, message: "저장 완료", font: .systemFont(ofSize: 14.0))
+            })
+        } else {
+            emptyTextFieldAlert()
+        }
     }
     
+    func emptyTextFieldAlert() {
+        let alert = UIAlertController(title: "알림", message: "빈칸을 모두 입력하세요", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+        
+        present(alert, animated: true)
+    }
+
     func save(diary: Diary) {
         
         let realm = try! Realm()
